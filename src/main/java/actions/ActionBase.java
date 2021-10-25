@@ -28,7 +28,7 @@ public abstract class ActionBase {
     /**
      * 初期化処理
      * サーブレットコンテキスト、リクエスト、レスポンスをクラスフィールドに設定
-     * @param servletCntext
+     * @param servletContext
      * @param servletRequest
      * @param servletResponse
      */
