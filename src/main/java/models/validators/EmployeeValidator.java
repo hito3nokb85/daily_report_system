@@ -8,7 +8,7 @@ import constants.MessageConst;
 import services.EmployeeService;
 
 /**
- * 従業員インスタンスに設定されている値のバリデーションんを行うクラス
+ * 従業員インスタンスに設定されている値のバリデーションを行うクラス
  *
  */
 public class EmployeeValidator {
@@ -63,10 +63,10 @@ public class EmployeeValidator {
         if(codeDuplicateCheckFlag) {
             //社員番号の重複チェックを実施
 
-            long employeeCount = isDuplicateEmployee(service, code);
+            long employeesCount = isDuplicateEmployee(service, code);
 
             //同一社員番号が既に登録されている場合はエラーメッセージを返却
-            if(employeeCount > 0) {
+            if(employeesCount > 0) {
                 return MessageConst.E_EMP_CODE_EXIST.getMessage();
             }
         }
