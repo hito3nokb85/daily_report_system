@@ -9,7 +9,7 @@ public enum MessageConst {
     //認証
     I_LOGINED("ログインしました。"),
     E_LOGINED("ログインに失敗しました。"),
-    E_LOTOUT("ログアウトしました。"),
+    I_LOGOUT("ログアウトしました。"),
 
     //DB更新
     I_REGISTERED("登録が完了しました。"),
