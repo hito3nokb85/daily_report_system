@@ -37,7 +37,7 @@
                 <tr>
                     <th>更新日時</th>
                     <fmt:parseDate value="${employee.updatedAt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="updateDay" type="date" />
-                    <td><fmt:formatDate value="${updateDay}" pattern="yyyy-Mm-dd HH:mm:ss" /></td>
+                    <td><fmt:formatDate value="${updateDay}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
                 </tr>
             </tbody>
         </table>
