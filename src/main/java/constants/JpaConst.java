@@ -41,14 +41,36 @@ public interface JpaConst {
     String REP_COL_CREATED_AT = "created_at"; //登録日時
     String REP_COL_UPDATED_AT = "updated_at"; //更新日時
 
+    //リアクションタイプテーブル
+    String TABLE_REA_TYP = "reaction_types"; //テーブル名
+    //リアクションテーブルカラム
+    String REA_TYP_COL_ID = "id"; //id
+    String REA_TYP_COL_NAME = "reaction_name"; //リアクション名
+
+    //リアクションテーブル
+    String TABLE_REA = "reactions"; //テーブル名
+    //リアクションテーブルカラム
+    String REA_COL_ID = "id"; //id
+    String REA_COL_EMP = "employee_id"; //リアクションした従業員のid
+    String REA_COL_REP = "report_id"; //リアクションされた日報のid
+    String REA_COL_REA_TYP = "reaction_type_id"; //リアクションの種類のid
+
+    int REA_TYP_READ = 1; //既読
+    int REA_TYP_LIKE = 2; //いいね！
+
     //Entity名
     String ENTITY_EMP = "employee"; //従業員
     String ENTITY_REP = "report"; //日報
+    String ENTITY_REA = "reaction"; //リアクション
 
     //JSQL内パラメータ
     String JPQL_PARM_CODE = "code"; //社員番号
     String JPQL_PARM_PASSWORD = "password"; //パスワード
     String JPQL_PARM_EMPLOYEE = "employee"; //従業員
+    String JPQL_PARM_REPORT = "report"; //日報
+    String JPQL_PARM_EMP = "EmployeeView"; //従業員
+    String JPQL_PARM_REA_TYP = "ReactionType"; //リアクションタイプ
+    String JPQL_PARM_REP = "ReportView"; //日報
 
     //NamedQueryのnameとquery
     //全ての従業員をidの降順に取得する
@@ -75,5 +97,16 @@ public interface JpaConst {
     //指定した従業員が作成した日報の件数を取得する
     String Q_REP_COUNT_ALL_MINE = ENTITY_REP + ".countAllMine";
     String Q_REP_COUNT_ALL_MINE_DEF = "SELECT COUNT(r) FROM Report AS r WHERE r.employee = :" + JPQL_PARM_EMPLOYEE;
+
+    //リアクションデータを1件取得する
+    String Q_REA_GET = ENTITY_REA + ".get";
+    String Q_REA_GET_DEF = "SELECT rea FROM Reaction AS rea WHERE rea.employee = :" + JPQL_PARM_EMP + " AND rea.reactionType = :" + JPQL_PARM_REA_TYP + " AND rea.report = :" + JPQL_PARM_REP;
+    //指定した日報につけられたリアクション件数を取得する
+    String Q_REA_COUNT_ALL_MINE = ENTITY_REA + ".countAllMine";
+    String Q_REA_COUTN_ALL_MINE_DEF = "SELECT COUNT(rea) FROM Reaction AS rea WHERE rea.reactionType = :" + JPQL_PARM_REA_TYP + " AND rea.report = :" + JPQL_PARM_REP;
+
+    //指定した日報にリアクションをつけた社員を取得する
+    String Q_REA_GET_READ_EMP = ENTITY_REA + ".getReadEmployee";
+    String Q_REA_GET_READ_EMP_DEF = "SELECT rea FROM Reaction AS rea WHERE rea.reactionType = :" + JPQL_PARM_REA_TYP + " AND rea.report = :" + JPQL_PARM_REP;
 
 }

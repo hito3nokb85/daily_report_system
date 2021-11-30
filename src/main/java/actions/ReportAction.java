@@ -6,12 +6,18 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import actions.views.EmployeeConverter;
 import actions.views.EmployeeView;
+import actions.views.ReactionView;
+import actions.views.ReportConverter;
 import actions.views.ReportView;
 import constants.AttributeConst;
 import constants.ForwardConst;
 import constants.JpaConst;
 import constants.MessageConst;
+import models.Reaction;
+import models.ReactionType;
+import services.ReactionService;
 import services.ReportService;
 
 /**
@@ -22,6 +28,8 @@ import services.ReportService;
 public class ReportAction extends ActionBase {
 
     private ReportService service;
+    private ReactionService reaService;
+
 
     /**
      * メソッドを実行する
@@ -30,10 +38,13 @@ public class ReportAction extends ActionBase {
     public void process() throws ServletException, IOException{
 
         service = new ReportService();
+        reaService = new ReactionService();
+
 
         //メソッドを実行
         invoke();
         service.close();
+        //reaService.close();
     }
 
     /**一覧画面を表示する
@@ -48,6 +59,8 @@ public class ReportAction extends ActionBase {
 
         //全日報データの件数を取得
         long reportsCount = service.countAll();
+
+
 
         putRequestScope(AttributeConst.REPORTS, reports); //取得した日報データ
         putRequestScope(AttributeConst.REP_COUNT, reportsCount); //全ての日報データの件数
@@ -149,20 +162,90 @@ public class ReportAction extends ActionBase {
          */
         public void show() throws ServletException, IOException{
 
+            //セッションからログイン中の従業員情報を取得
+            EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
+
+           //idを条件に日報データを取得する
+           ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
+
+           //リアクションタイプを取得する
+           ReactionType read = reaService.findOne(JpaConst.REA_TYP_READ);
+           ReactionType like = reaService.findOne(JpaConst.REA_TYP_LIKE);
+
+           //日報idを条件に既読・いいねの件数をそれぞれ取得する
+           long readsCount = reaService.countAllMine(read, ReportConverter.toModel(rv));
+           long likesCount = reaService.countAllMine(like, ReportConverter.toModel(rv));
+
+           //各リアクションのデータを取得する
+           Reaction raRead = reaService.findOne(EmployeeConverter.toModel(ev), read, ReportConverter.toModel(rv));
+           Reaction raLike = reaService.findOne(EmployeeConverter.toModel(ev), like, ReportConverter.toModel(rv));
+
+           //各日報にリアクションした従業員を取得する
+           List<ReactionView> reactions = reaService.getReadEmp(read, ReportConverter.toModel(rv));
+
+
+           if(rv == null) {
+               //該当の日報データが存在しない場合はエラー画面を表示
+               forward(ForwardConst.FW_ERR_UNKNOWN);
+
+           }else {
+
+               putRequestScope(AttributeConst.REPORT, rv); //取得した日報データ
+               putRequestScope(AttributeConst.READ_COUNT, readsCount); //取得した既読件数
+               putRequestScope(AttributeConst.LIKE_COUNT, likesCount); //取得したいいね件数
+               putRequestScope(AttributeConst.TOKEN, getTokenId());
+               putRequestScope(AttributeConst.READ, raRead);
+               putRequestScope(AttributeConst.LIKE, raLike);
+               putRequestScope(AttributeConst.REACTIONS, reactions);
+
+
+
+               //詳細画面を表示
+               forward(ForwardConst.FW_REP_SHOW);
+           }
+
+        }
+
+        /**
+         * リアクションデータを登録・削除する
+         * @throws ServletException
+         * @throws IOException
+         */
+        public void createReaction() throws ServletException,IOException{
+
+            //CSRF対策 tokenのチェック
+            if(checkToken()) {
+
+            //セッションからログイン中の従業員情報を取得
+            EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
+
             //idを条件に日報データを取得する
             ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
 
-            if(rv == null) {
-                //該当の日報データが存在しない場合はエラー画面を表示
-                forward(ForwardConst.FW_ERR_UNKNOWN);
+            //idを条件にリアクションタイプを取得する
+            ReactionType rt = reaService.findOne(toNumber(getRequestParam(AttributeConst.REA_TYP_ID)));
 
+
+            Reaction ra = reaService.findOne(EmployeeConverter.toModel(ev), rt, ReportConverter.toModel(rv));
+
+            if(ra == null) {
+                //リアクションのインスタンスを作成する
+                ReactionView rav = new ReactionView(
+                        null,
+                        ev,
+                        rv,
+                        rt);
+
+                reaService.create(rav);
+
+            //リアクション済みの場合は削除する
             }else {
-
-                putRequestScope(AttributeConst.REPORT, rv); //取得した日報データ
-
-                //詳細画面を表示
-                forward(ForwardConst.FW_REP_SHOW);
+                reaService.destroy(ra);
             }
+
+            //一覧画面へリダイレクト
+            redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
+        }
 
         }
 
@@ -172,6 +255,7 @@ public class ReportAction extends ActionBase {
          * @throws IOException
          */
         public void edit() throws ServletException, IOException{
+
 
             //idを条件に日報データを取得する
             ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
@@ -194,48 +278,48 @@ public class ReportAction extends ActionBase {
                 forward(ForwardConst.FW_REP_EDIT);
             }
         }
-        
+
         /**
          * 更新を行う
          * @throws ServletException
          * @throws IOException
          */
         public void update() throws ServletException, IOException{
-            
+
             //CSRF対策 tokenのチェック
             if(checkToken()) {
-                
+
                 //idを条件に日報データを取得する
                 ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));;
-                
+
                 //入力された日報内容を設定する
                 rv.setReportDate(toLocalDate(getRequestParam(AttributeConst.REP_DATE)));
                 rv.setTitle(getRequestParam(AttributeConst.REP_TITLE));
                 rv.setContent(getRequestParam(AttributeConst.REP_CONTENT));
-                
+
                 //日報データを更新する
                 List<String> errors = service.update(rv);
-                
+
                 if(errors.size() > 0) {
                     //更新中にエラーが発生した場合
-                    
+
                     putRequestScope(AttributeConst.TOKEN, getTokenId()); //CSRF対策用トークン
                     putRequestScope(AttributeConst.REPORT, rv); //入力された日報情報
                     putRequestScope(AttributeConst.ERR, errors); //エラーのリスト
-                    
+
                     //編集画面を再表示
                     forward(ForwardConst.FW_REP_EDIT);
                 }else {
                     //更新中にエラーがなかった場合
-                    
+
                     //セッションに更新完了のフラッシュメッセージを設定
                     putSessionScope(AttributeConst.FLUSH, MessageConst.I_UPDATED.getMessage());
-                    
+
                     //一覧画面にリダイレクト
                     redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
                 }
             }
-        
+
         }
 
 

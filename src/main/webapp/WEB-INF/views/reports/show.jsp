@@ -2,10 +2,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ page import="constants.ForwardConst" %>
+<%@ page import="constants.AttributeConst" %>
 
 <c:set var="actRep" value="${ForwardConst.ACT_REP.getValue()}" />
 <c:set var="commIdx" value="${ForwardConst.CMD_INDEX.getValue()}" />
 <c:set var="commEdt" value="${ForwardConst.CMD_EDIT.getValue()}" />
+<c:set var="commRea" value="${ForwardConst.CMD_CREATE_REA.getValue()}" />
 
 <c:import url="/WEB-INF/views/layout/app.jsp">
     <c:param name="content">
@@ -41,11 +43,53 @@
         </table>
 
         <c:if test="${sessionScope.login_employee.id == report.employee.id}">
+            <p>「既読」${reads_count}件
+               「いいね！」${likes_count}件 </p>
+
             <p>
                 <a href="<c:url value='?action=${actRep}&command=${commEdt}&id=${report.id}' />">この日報を編集する</a>
             </p>
         </c:if>
 
+        <p>
+            <c:if test="${sessionScope.login_employee.id != report.employee.id}">
+                <form method="POST" action="<c:url value='?action=${actRep}&command=${commRea}' />">
+
+                       <input type="hidden" name="${AttributeConst.REP_ID.getValue()}" value="${report.id}" />
+                       <input type="hidden" name="${AttributeConst.REA_TYP_ID.getValue()}" value="1" />
+                       <input type="hidden" name="${AttributeConst.TOKEN.getValue()}" value="${_token}" />
+                       <c:choose>
+                            <c:when test="${read == null}">
+                                <input type="submit" value="既読"> ${reads_count}件
+                            </c:when>
+                       <c:otherwise>
+                            <input type="submit" value="既読を取り消す"> ${reads_count}件
+                       </c:otherwise>
+                       </c:choose>
+                </form>
+
+                <c:forEach var="reaction" items="${reactions}">
+                    <c:out value="${reaction.employee.name}" />
+                </c:forEach>
+
+
+
+                <form method="POST" action="<c:url value='?action=${actRep}&command=${commRea}' />">
+
+                       <input type="hidden" name="${AttributeConst.REP_ID.getValue()}" value="${report.id}" />
+                       <input type="hidden" name="${AttributeConst.REA_TYP_ID.getValue()}" value="2" />
+                       <input type="hidden" name="${AttributeConst.TOKEN.getValue()}" value="${_token}" />
+                       <c:choose>
+                            <c:when test="${like == null}">
+                                <input type="submit" value="いいね！"> ${likes_count}件
+                            </c:when>
+                       <c:otherwise>
+                            <input type="submit" value="いいね！を取り消す"> ${likes_count}件
+                       </c:otherwise>
+                       </c:choose>
+                </form>
+            </c:if>
+        </p>
         <p>
             <a href="<c:url value='?action=${actRep}&command=${commIdx}' />">一覧に戻る</a>
         </p>
