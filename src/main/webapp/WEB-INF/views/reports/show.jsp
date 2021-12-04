@@ -43,8 +43,20 @@
         </table>
 
         <c:if test="${sessionScope.login_employee.id == report.employee.id}">
-            <p>「既読」${reads_count}件
-               「いいね！」${likes_count}件 </p>
+            <div class ="reactions">
+            <div class ="reaction">「既読」${reads_count}件 </div>
+
+            <div class ="reaction">「いいね！」${likes_count}件 </div>
+            </div>
+
+            <div class ="reaction_emp">
+             &emsp;既読：
+             <c:forEach var="reaction" items="${reactions}">
+                    <c:out value="${reaction.employee.name}" />，
+             </c:forEach>
+            </div>
+
+
 
             <p>
                 <a href="<c:url value='?action=${actRep}&command=${commEdt}&id=${report.id}' />">この日報を編集する</a>
@@ -53,6 +65,8 @@
 
         <p>
             <c:if test="${sessionScope.login_employee.id != report.employee.id}">
+            <div class="reactions">
+            <div class ="reaction">
                 <form method="POST" action="<c:url value='?action=${actRep}&command=${commRea}' />">
 
                        <input type="hidden" name="${AttributeConst.REP_ID.getValue()}" value="${report.id}" />
@@ -60,20 +74,18 @@
                        <input type="hidden" name="${AttributeConst.TOKEN.getValue()}" value="${_token}" />
                        <c:choose>
                             <c:when test="${read == null}">
-                                <input type="submit" value="既読"> ${reads_count}件
+                                <input type="submit" value="既読"><br/>
+                                 (既読 ${reads_count}件)
                             </c:when>
                        <c:otherwise>
-                            <input type="submit" value="既読を取り消す"> ${reads_count}件
+                            <input type="submit" value="既読を取り消す"><br/>
+                             (既読 ${reads_count}件)
                        </c:otherwise>
                        </c:choose>
                 </form>
+            </div>
 
-                <c:forEach var="reaction" items="${reactions}">
-                    <c:out value="${reaction.employee.name}" />
-                </c:forEach>
-
-
-
+            <div class ="reaction">
                 <form method="POST" action="<c:url value='?action=${actRep}&command=${commRea}' />">
 
                        <input type="hidden" name="${AttributeConst.REP_ID.getValue()}" value="${report.id}" />
@@ -81,13 +93,17 @@
                        <input type="hidden" name="${AttributeConst.TOKEN.getValue()}" value="${_token}" />
                        <c:choose>
                             <c:when test="${like == null}">
-                                <input type="submit" value="いいね！"> ${likes_count}件
+                                <input type="submit" value="いいね！"><br/>
+                               (いいね ${likes_count}件)
                             </c:when>
                        <c:otherwise>
-                            <input type="submit" value="いいね！を取り消す"> ${likes_count}件
+                            <input type="submit" value="いいね！を取り消す"><br/>
+                             (いいね ${likes_count}件)
                        </c:otherwise>
                        </c:choose>
                 </form>
+            </div>
+            </div>
             </c:if>
         </p>
         <p>

@@ -10,11 +10,15 @@ import actions.views.ReportView;
 import constants.AttributeConst;
 import constants.ForwardConst;
 import constants.JpaConst;
+import models.CountReaction;
+import models.ReactionType;
+import services.ReactionService;
 import services.ReportService;
 
 public class TopAction extends ActionBase {
 
     private ReportService service;
+    private ReactionService reaService;
 
     /**
      * indexメソッドを実行する
@@ -23,11 +27,13 @@ public class TopAction extends ActionBase {
     public void process() throws ServletException,IOException{
 
         service = new ReportService();
+        reaService = new ReactionService();
 
         //メソッドを実行
         invoke();
 
         service.close();
+        reaService.close();
     }
 
     /**
@@ -45,11 +51,15 @@ public class TopAction extends ActionBase {
         //ログイン中の従業員が作成した日報データの件数を取得
         long myReportsCount = service.countAllMine(loginEmployee);
 
+        //各日報につけられた既読件数を取得する
+        ReactionType read = reaService.findOne(JpaConst.REA_TYP_READ);
+        List<CountReaction> countReaction = reaService.getCountRead(read);
+
         putRequestScope(AttributeConst.REPORTS, reports); //取得した日報データ
         putRequestScope(AttributeConst.REP_COUNT, myReportsCount); //ログイン中の従業員が作成した日報の数
         putRequestScope(AttributeConst.PAGE, page); //ページ数
         putRequestScope(AttributeConst.MAX_ROW, JpaConst.ROW_PER_PAGE); //1ページに表示するレコードの数
-
+        putRequestScope(AttributeConst.COUNT_REA, countReaction); //既読件数
 
 
         //セッションにフラッシュメッセージが設定されている場合はリクエストスコープに移し替え、セッションからは削除する

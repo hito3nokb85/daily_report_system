@@ -32,6 +32,7 @@ import lombok.Setter;
     @NamedQuery(
             name = JpaConst.Q_REA_GET_READ_EMP,
             query = JpaConst.Q_REA_GET_READ_EMP_DEF)
+
 })
 
 

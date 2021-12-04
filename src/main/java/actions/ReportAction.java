@@ -15,6 +15,7 @@ import constants.AttributeConst;
 import constants.ForwardConst;
 import constants.JpaConst;
 import constants.MessageConst;
+import models.CountReaction;
 import models.Reaction;
 import models.ReactionType;
 import services.ReactionService;
@@ -60,12 +61,15 @@ public class ReportAction extends ActionBase {
         //全日報データの件数を取得
         long reportsCount = service.countAll();
 
-
+        //各日報につけられた既読件数を取得する
+        ReactionType read = reaService.findOne(JpaConst.REA_TYP_READ);
+        List<CountReaction> countReaction = reaService.getCountRead(read);
 
         putRequestScope(AttributeConst.REPORTS, reports); //取得した日報データ
         putRequestScope(AttributeConst.REP_COUNT, reportsCount); //全ての日報データの件数
         putRequestScope(AttributeConst.PAGE, page); //ページ数
         putRequestScope(AttributeConst.MAX_ROW, JpaConst.ROW_PER_PAGE); //1ページに表示するレコードの数
+        putRequestScope(AttributeConst.COUNT_REA, countReaction); //既読件数
 
         //セッションにフラッシュメッセージが設定されている場合はリクエストスコープに移し替え、セッションからは削除する
         String flush = getSessionScope(AttributeConst.FLUSH);
@@ -245,6 +249,7 @@ public class ReportAction extends ActionBase {
 
             //一覧画面へリダイレクト
             redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
+
         }
 
         }

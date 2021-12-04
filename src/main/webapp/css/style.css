@@ -169,4 +169,8 @@ h3{
     font-size: larger;
 }
 
+.reactions{
+    display: flex;
+    gap: 4px 10px;
+}
 

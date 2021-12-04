@@ -7,6 +7,7 @@ import javax.persistence.NoResultException;
 import actions.views.ReactionConverter;
 import actions.views.ReactionView;
 import constants.JpaConst;
+import models.CountReaction;
 import models.Employee;
 import models.Reaction;
 import models.ReactionType;
@@ -103,7 +104,22 @@ public class ReactionService extends ServiceBase{
         return ReactionConverter.toViewList(reactions);
     }
 
-
+    /**
+     * 指定した日報につけられた既読件数を取得し、CountReactionのリストで返却する
+     * @param reactionType
+     * @return リアクション件数のリスト
+     */
+    public List<CountReaction> getCountRead(ReactionType reactionType){
+        List<CountReaction> countReaction = em.createQuery(JpaConst.Q_REA_COUNT_DEF, CountReaction.class)
+                .setParameter(JpaConst.JPQL_PARM_REA_TYP, reactionType)
+                .getResultList();
+        for(CountReaction c : countReaction) {
+            System.out.println(c.getReport().getId());
+            System.out.println(c.getReactionType().getReactionName());
+            System.out.println(c.getCount());
+        }
+        return countReaction;
+    }
 
 
 

@@ -56,7 +56,8 @@ public enum AttributeConst {
     LIKE_COUNT("likes_count"),
     READ("read"),
     LIKE("like"),
-    REACTIONS("reactions");
+    REACTIONS("reactions"),
+    COUNT_REA("countReaction");
 
     private final String text;
     private final Integer i;

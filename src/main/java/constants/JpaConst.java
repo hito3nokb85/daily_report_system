@@ -109,4 +109,7 @@ public interface JpaConst {
     String Q_REA_GET_READ_EMP = ENTITY_REA + ".getReadEmployee";
     String Q_REA_GET_READ_EMP_DEF = "SELECT rea FROM Reaction AS rea WHERE rea.reactionType = :" + JPQL_PARM_REA_TYP + " AND rea.report = :" + JPQL_PARM_REP;
 
+    //各日報につけられたリアクション件数を、一覧画面に表示する分取得する
+    String Q_REA_COUNT_DEF = "SELECT NEW models.CountReaction(rea.report, rea.reactionType, count(rea)) FROM Reaction As rea GROUP BY rea.report, rea.reactionType HAVING rea.reactionType =:" + JPQL_PARM_REA_TYP;
+
 }
