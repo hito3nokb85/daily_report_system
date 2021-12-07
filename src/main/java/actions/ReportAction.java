@@ -247,9 +247,8 @@ public class ReportAction extends ActionBase {
                 reaService.destroy(ra);
             }
 
-            //一覧画面へリダイレクト
-            redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
-
+            //詳細画面を再表示
+            show();
         }
 
         }

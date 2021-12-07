@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ page import="constants.ForwardConst" %>
 <%@ page import="constants.AttributeConst" %>
 
@@ -44,17 +45,23 @@
 
         <c:if test="${sessionScope.login_employee.id == report.employee.id}">
             <div class ="reactions">
-            <div class ="reaction">「既読」${reads_count}件 </div>
+                <div class ="reaction">「既読」${reads_count}件 </div>
 
-            <div class ="reaction">「いいね！」${likes_count}件 </div>
+                <div class ="reaction">「いいね！」${likes_count}件 </div>
             </div>
 
-            <div class ="reaction_emp">
-             &emsp;既読：
-             <c:forEach var="reaction" items="${reactions}">
-                    <c:out value="${reaction.employee.name}" />，
-             </c:forEach>
-            </div>
+
+            <c:if test="${fn:length(reactions) != 0}">
+                <div class ="reaction_emp">
+                <div class ="reaction_title">
+                    <span>既読者 一覧</span>
+                </div>
+                    <c:forEach var="reaction" items="${reactions}">
+                        <span class ="emp"><c:out value="${reaction.employee.name} "/></span>
+                    </c:forEach>
+                </div>
+
+            </c:if>
 
 
 

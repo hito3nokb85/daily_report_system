@@ -38,13 +38,13 @@
                         <td class="report_date"><fmt:formatDate value='${reportDay}' pattern='yyyy-MM-dd' /></td>
                         <td class="report_title">${report.title}</td>
                         <td class="report_read">
+                            <c:set var="cnt" value="0" />
                             <c:forEach var="reaction" items="${countReaction}">
-                                <c:choose>
-                                    <c:when test="${report.id == reaction.report.id}"><c:out value="${reaction.count}" /></c:when>
-                                    <c:otherwise><c:out value="0"/></c:otherwise>
-                                </c:choose>
+                                <c:if test="${report.id == reaction.report.id}">
+                                    <c:set var="cnt" value="${reaction.count}" />
+                                </c:if>
                             </c:forEach>
-
+                            <c:out value="${cnt}" />
                         </td>
 
                         <td class="report_action"><a href="<c:url value='?action=${actRep}&command=${commShow}&id=${report.id}' />">詳細を見る</a></td>

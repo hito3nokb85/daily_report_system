@@ -73,7 +73,6 @@ public class ReactionService extends ServiceBase{
         em.getTransaction().begin();
         em.remove(ra);
         em.getTransaction().commit();
-        em.close();
     }
 
     /**

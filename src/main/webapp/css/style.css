@@ -171,6 +171,39 @@ h3{
 
 .reactions{
     display: flex;
-    gap: 4px 10px;
+    gap: 6px 12px;
+    margin: 10px 0 0 0;
 }
 
+.reaction_emp{
+    position: relative;
+    border: 1px solid #cccccc;
+    background: #f2f2f2;
+    display: inline-block;
+    max-width: 30%;
+    min-width: 130px;
+    max-height: 70px;
+    margin: 10px 10px;
+    padding: 25px 5px 5px;
+    overflow-y: auto;
+}
+.reaction_emp .reaction_title{
+    position: absolute;
+    left: 0;
+    top: 0;
+    line-height: 20px;
+    padding: 10px0 10px 0;
+    margin: 5px 0 10px 5px;
+    text-decoration: underline;
+    text-decoration-color:rgba(104,104,104,0.5);
+}
+.reaction_emp .emp{
+    display: inline-block;
+    border: 1px solid #cccccc;
+    background: #ffffff;
+    border-radius: 5px;
+    margin: 5px 0 0 8px;
+    padding: 0 5px;
+
+
+}
