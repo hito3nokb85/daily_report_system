@@ -58,10 +58,18 @@ public interface JpaConst {
     int REA_TYP_READ = 1; //既読
     int REA_TYP_LIKE = 2; //いいね！
 
+    //フォローテーブル
+    String TABLE_FOL = "follows"; //テーブル名
+    //フォローテーブルカラム
+    String FOL_COL_ID = "id"; //id
+    String FOL_COL_FOLER = "follower_id"; //フォロワーid
+    String FOL_COL_FOLEE = "followee_id"; //フォロイーid
+
     //Entity名
     String ENTITY_EMP = "employee"; //従業員
     String ENTITY_REP = "report"; //日報
     String ENTITY_REA = "reaction"; //リアクション
+    String ENTITY_FOL = "follow"; //フォロー
 
     //JSQL内パラメータ
     String JPQL_PARM_CODE = "code"; //社員番号
@@ -71,6 +79,9 @@ public interface JpaConst {
     String JPQL_PARM_EMP = "EmployeeView"; //従業員
     String JPQL_PARM_REA_TYP = "ReactionType"; //リアクションタイプ
     String JPQL_PARM_REP = "ReportView"; //日報
+    String JPQL_PARM_FOLLOWER = "follower"; //フォロワー
+    String JPQL_PARM_FOLLOWEE = "followee"; //フォロイー
+    String JPQL_PARM_FOLLOWEES = "followees";
 
     //NamedQueryのnameとquery
     //全ての従業員をidの降順に取得する
@@ -104,12 +115,36 @@ public interface JpaConst {
     //指定した日報につけられたリアクション件数を取得する
     String Q_REA_COUNT_ALL_MINE = ENTITY_REA + ".countAllMine";
     String Q_REA_COUTN_ALL_MINE_DEF = "SELECT COUNT(rea) FROM Reaction AS rea WHERE rea.reactionType = :" + JPQL_PARM_REA_TYP + " AND rea.report = :" + JPQL_PARM_REP;
-
     //指定した日報にリアクションをつけた社員を取得する
     String Q_REA_GET_READ_EMP = ENTITY_REA + ".getReadEmployee";
     String Q_REA_GET_READ_EMP_DEF = "SELECT rea FROM Reaction AS rea WHERE rea.reactionType = :" + JPQL_PARM_REA_TYP + " AND rea.report = :" + JPQL_PARM_REP;
-
     //各日報につけられたリアクション件数を、一覧画面に表示する分取得する
     String Q_REA_COUNT_DEF = "SELECT NEW models.CountReaction(rea.report, rea.reactionType, count(rea)) FROM Reaction As rea GROUP BY rea.report, rea.reactionType HAVING rea.reactionType =:" + JPQL_PARM_REA_TYP;
+    //指定した従業員がリアクションをつけた日報を取得する
+    String Q_REA_GET_READ_REP = ENTITY_REA + ".getReadReport";
+    String Q_REA_GET_READ_REP_DEF = "SELECT rea FROM Reaction AS rea WHERE rea.reactionType = 1 AND rea.employee = :" + JPQL_PARM_EMPLOYEE;
+
+    //フォローデータを1件取得する
+    String Q_FOL_GET = ENTITY_FOL + ".get";
+    String Q_FOL_GET_DEF = "SELECT f FROM Follow AS f WHERE f.follower = :" + JPQL_PARM_FOLLOWER + " AND f.followee = :" + JPQL_PARM_FOLLOWEE;
+    //指定した従業員がフォローしている従業員を取得する
+    String Q_FOL_GET_FOLEE = ENTITY_FOL + ".getFollowee";
+    String Q_FOL_GET_FOLEE_DEF = "SELECT f FROM Follow AS f WHERE f.follower = :" + JPQL_PARM_EMPLOYEE;
+    //指定した従業員をフォローしている従業員を取得する
+    String Q_FOL_GET_FOLER = ENTITY_FOL + ".getFollower";
+    String Q_FOL_GET_FOLER_DEF = "SELECT f FROM Follow AS f WHERE f.followee = :" + JPQL_PARM_EMPLOYEE;
+    //指定した従業員がフォローしている従業員の件数を取得する
+    String Q_FOL_COUNT_FOLEE = ENTITY_FOL + ".countFolowee";
+    String Q_FOL_COUNT_FOLEE_DEF = "SELECT COUNT(f) FROM Follow AS f WHERE f.follower = :" + JPQL_PARM_EMPLOYEE;
+    //指定した従業員をフォローしている従業員の件数を取得する
+    String Q_FOL_COUNT_FOLER = ENTITY_FOL + "countFollower";
+    String Q_FOL_COUNT_FOLER_DEF = "SELECT COUNT(f) FROM Follow AS f WHERE f.followee = :" + JPQL_PARM_EMPLOYEE;
+
+    //指定した従業員がフォローしている従業員の日報を取得する
+    String Q_REP_GET_FOLEE = ENTITY_REP + ".getFollowee";
+    String Q_REP_GET_FOLEE_DEF = "SELECT r FROM Report AS r WHERE r.employee IN (SELECT f.followee FROM Follow AS f WHERE f.follower = :" + JPQL_PARM_EMPLOYEE + ")" + " ORDER BY r.id DESC";
+    //指定した従業員がフォローしている従業員の日報の件数を取得する
+    String Q_REP_COUNT_FOLEE = ENTITY_REP + "countFollowee";
+    String Q_REP_COUNT_FOLEE_DEF = "SELECT COUNT(r) FROM Report AS r WHERE r.employee IN (SELECT f.followee FROM Follow AS f WHERE f.follower = :" + JPQL_PARM_EMPLOYEE + ")" ;
 
 }

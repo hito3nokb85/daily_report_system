@@ -120,6 +120,19 @@ public class ReactionService extends ServiceBase{
         return countReaction;
     }
 
+    /**
+     * 指定した従業員が既読をつけた日報を取得し、ReactionViewのリストで返却する
+     * @param employee
+     * @return リアクションされた日報のリスト
+     */
+    public List<ReactionView> getReadRep(Employee employee){
+        List<Reaction> reads = em.createNamedQuery(JpaConst.Q_REA_GET_READ_REP,Reaction.class)
+                .setParameter(JpaConst.JPQL_PARM_EMPLOYEE, employee)
+                .getResultList();
+
+        return ReactionConverter.toViewList(reads);
+    }
+
 
 
 

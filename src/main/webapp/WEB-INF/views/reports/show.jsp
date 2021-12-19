@@ -6,6 +6,7 @@
 <%@ page import="constants.AttributeConst" %>
 
 <c:set var="actRep" value="${ForwardConst.ACT_REP.getValue()}" />
+<c:set var="actFol" value="${ForwardConst.ACT_FOL.getValue()}" />
 <c:set var="commIdx" value="${ForwardConst.CMD_INDEX.getValue()}" />
 <c:set var="commEdt" value="${ForwardConst.CMD_EDIT.getValue()}" />
 <c:set var="commRea" value="${ForwardConst.CMD_CREATE_REA.getValue()}" />
@@ -115,6 +116,9 @@
         </p>
         <p>
             <a href="<c:url value='?action=${actRep}&command=${commIdx}' />">一覧に戻る</a>
+        </p>
+        <p>
+            <a href="<c:url value='?action=${actFol}&command=${commIdx}' />">フォローしている人の日報一覧へ</a>
         </p>
     </c:param>
 </c:import>

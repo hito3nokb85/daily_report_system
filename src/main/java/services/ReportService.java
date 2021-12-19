@@ -8,6 +8,7 @@ import actions.views.EmployeeView;
 import actions.views.ReportConverter;
 import actions.views.ReportView;
 import constants.JpaConst;
+import models.Employee;
 import models.Report;
 import models.validators.ReportValidator;
 
@@ -153,5 +154,32 @@ public class ReportService extends ServiceBase {
         em.getTransaction().commit();
     }
 
+    /**
+     * 指定した従業員がフォローしている従業員の日報を取得し、返却する
+     * @param employee
+     * @return 一覧画面に表示するリスト
+     */
+    public List<Report> getFolloweePerPage(Employee employee, int page){
 
+        List<Report> reports = em.createNamedQuery(JpaConst.Q_REP_GET_FOLEE, Report.class)
+                .setParameter(JpaConst.JPQL_PARM_EMPLOYEE, employee)
+                .setFirstResult(JpaConst.ROW_PER_PAGE * (page - 1))
+                .setMaxResults(JpaConst.ROW_PER_PAGE)
+                .getResultList();
+
+        return reports;
+    }
+
+    /**
+     * 指定した従業員がフォローしている従業員が作成した日報データの件数を取得し、返却する
+     * @param employee
+     * @return 日報データの件数
+     */
+    public long countFollowee(Employee employee) {
+        long count = (long) em.createNamedQuery(JpaConst.Q_REP_COUNT_FOLEE, Long.class)
+                .setParameter(JpaConst.JPQL_PARM_EMPLOYEE, employee)
+                .getSingleResult();
+
+        return count;
+    }
 }
